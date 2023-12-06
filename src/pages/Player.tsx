@@ -1,12 +1,20 @@
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle } from 'lucide-react';
+import { Header } from '../components/Header';
+import { Video } from '../components/Video';
+import { Module } from '../components/Module';
+import { useAppSelector } from '../store';
+import { useCurrentLesson } from '../store/slices/player';
+import { useEffect } from 'react';
 
-import { Header } from '../components/Header'
-import { Video } from '../components/Video'
-import { Module } from '../components/Module'
-import { useAppSelector } from '../store'
 
 export function Player() {
-  const modules = useAppSelector(state => state.player.course.modules)
+  const modules = useAppSelector(state => state.player.course.modules);
+
+  const { currentLesson } = useCurrentLesson();
+
+  useEffect(() => {
+    document.title = `Assistindo: ${currentLesson.title}`
+  }, [currentLesson]);
 
   return (
     <div className="h-screen bg-zinc-950 text-zinc-50 flex justify-center items-center">
@@ -17,9 +25,9 @@ export function Player() {
           </div>
 
           <aside className="w-80 border-l absolute top-0 bottom-0 right-0 border-zinc-800 bg-zinc-900 overflow-y-scroll scrollbar scrollbar-thin scrollbar-track-zinc-900 scrollbar-thumb-zinc-800 divide-y-2 divide-zinc-900">
-            { modules.map((module, index) => {
-              return <Module moduleIndex={index} title={module.title} amountOfLessons={module.lessons.length} />
-            }) }
+            {modules.map((module, index) => {
+              return <Module moduleIndex={index} title={module.title} amountOfLessons={module.lessons.length} />;
+            })}
           </aside>
         </main>
         <div className="flex items-center justify-between">
@@ -34,5 +42,5 @@ export function Player() {
         </div>
       </div>
     </div>
-  )
+  );
 }
