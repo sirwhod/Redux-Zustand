@@ -1,19 +1,23 @@
-import { MessageCircle } from 'lucide-react';
+import { ChevronDown, MessageCircle } from 'lucide-react';
 import { Header } from '../components/Header';
 import { Video } from '../components/Video';
 import { Module } from '../components/Module';
-import { useAppSelector } from '../store';
-import { useCurrentLesson } from '../store/slices/player';
 import { useEffect } from 'react';
-
+import { useCurrentLesson, useStore } from '../zustandStore';
 
 export function Player() {
-  const modules = useAppSelector(state => state.player.course.modules);
+  const { course, isLoading, load } = useStore()
 
   const { currentLesson } = useCurrentLesson();
 
   useEffect(() => {
-    document.title = `Assistindo: ${currentLesson.title}`
+    load()
+  },[])
+
+  useEffect(() => {
+    if (currentLesson) {
+      document.title = `Assistindo: ${currentLesson.title}`
+    }
   }, [currentLesson]);
 
   return (
@@ -25,8 +29,51 @@ export function Player() {
           </div>
 
           <aside className="w-80 border-l absolute top-0 bottom-0 right-0 border-zinc-800 bg-zinc-900 overflow-y-scroll scrollbar scrollbar-thin scrollbar-track-zinc-900 scrollbar-thumb-zinc-800 divide-y-2 divide-zinc-900">
-            {modules.map((module, index) => {
-              return <Module moduleIndex={index} title={module.title} amountOfLessons={module.lessons.length} />;
+            {isLoading && (
+              <>
+                <div className="flex animate-pulse w-full items-center gap-3 bg-zinc-800 p-4">
+                  <div className="flex h-10 w-14 rounded-full bg-zinc-950/25" />
+                  <div className="flex flex-col w-full gap-1">
+                    <div className="h-6 w-full bg-zinc-600/25 rounded" />
+                    <div className="h-3 w-full bg-zinc-700/25 rounded"/>
+                  </div>
+                  <ChevronDown className="w-5 h-5 ml-auto text-zinc-500/25" />
+                </div>
+                <div className="flex animate-pulse w-full items-center gap-3 bg-zinc-800 p-4">
+                  <div className="flex h-10 w-14 rounded-full bg-zinc-950/25" />
+                  <div className="flex flex-col w-full gap-1">
+                    <div className="h-6 w-full bg-zinc-600/25 rounded" />
+                    <div className="h-3 w-full bg-zinc-700/25 rounded"/>
+                  </div>
+                  <ChevronDown className="w-5 h-5 ml-auto text-zinc-500/25" />
+                </div>
+                <div className="flex animate-pulse w-full items-center gap-3 bg-zinc-800 p-4">
+                  <div className="flex h-10 w-14 rounded-full bg-zinc-950/25" />
+                  <div className="flex flex-col w-full gap-1">
+                    <div className="h-6 w-full bg-zinc-600/25 rounded" />
+                    <div className="h-3 w-full bg-zinc-700/25 rounded"/>
+                  </div>
+                  <ChevronDown className="w-5 h-5 ml-auto text-zinc-500/25" />
+                </div>
+                <div className="flex animate-pulse w-full items-center gap-3 bg-zinc-800 p-4">
+                  <div className="flex h-10 w-14 rounded-full bg-zinc-950/25" />
+                  <div className="flex flex-col w-full gap-1">
+                    <div className="h-6 w-full bg-zinc-600/25 rounded" />
+                    <div className="h-3 w-full bg-zinc-700/25 rounded"/>
+                  </div>
+                  <ChevronDown className="w-5 h-5 ml-auto text-zinc-500/25" />
+                </div>
+              </>
+            )}
+            {course?.modules && course?.modules.map((module, index) => {
+              return (
+                <Module 
+                  key={module.id} 
+                  moduleIndex={index} 
+                  title={module.title} 
+                  amountOfLessons={module.lessons.length} 
+                />
+              );
             })}
           </aside>
         </main>
@@ -34,7 +81,10 @@ export function Player() {
           {/*HEADER*/}
           <Header />
 
-          <button className="flex items-center gap-2 rounded bg-violet-500 px-3 py-2 text-sm font-medium text-white hover:bg-violet-600">
+          <button
+            disabled={isLoading} 
+            className="flex items-center gap-2 rounded bg-violet-500 px-3 py-2 text-sm font-medium text-white hover:bg-violet-600 disabled:bg-violet-500/50 disabled:cursor-not-allowed"
+          >
             <MessageCircle className="w-4 h-4" />
             Deixar feedback
           </button>

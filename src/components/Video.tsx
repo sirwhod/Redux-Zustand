@@ -1,26 +1,36 @@
 import ReactPlayer from 'react-player'
-import { useDispatch } from 'react-redux'
-import { next, useCurrentLesson } from '../store/slices/player'
+import { Loader } from 'lucide-react'
+import { useCurrentLesson, useStore } from '../zustandStore'
 
 export function Video() {
-  const dispatch = useDispatch()
-
   const { currentLesson } = useCurrentLesson()
+  const { isLoading, next } = useStore(state => {
+    return {
+      isLoading: state.isLoading,
+      next: state.next
+    }
+  })
 
   function handlePlayNext() {
-    dispatch(next())
+    next()
   }
 
   return (
     <div className="w-ful bg-zinc-950 aspect-video">
-      <ReactPlayer
-        width="100%"
-        height="100%"
-        controls
-        onEnded={handlePlayNext}
-        playing
-        url={`https://www.youtube.com/watch?v=${currentLesson.id}`}
-      />
+      { isLoading ? (
+        <div className="flex h-full items-center justify-center">
+          <Loader className="w-6 h-6 text-zinc-400 animate-spin" />
+        </div>
+      ) : (
+        <ReactPlayer
+          width="100%"
+          height="100%"
+          controls
+          onEnded={handlePlayNext}
+          playing
+          url={`https://www.youtube.com/watch?v=${currentLesson?.id}`}
+        />
+      )}
     </div>
   )
 }
